@@ -1,0 +1,28 @@
+#Postwork 5
+
+lista <- lapply(dir(), read.csv)
+lista <- lapply(lista,select, Date, HomeTeam, FTHG, AwayTeam ,FTAG)
+data <- do.call(rbind, lista)
+data <- mutate(data, Date = as.Date(Date, "%d/%m/%y"))
+data <- rename(data, date = Date, home.team = HomeTeam, 
+               home.score = FTHG, away.team = AwayTeam, 
+               away.score = FTAG)
+write.csv(data, file = 'footballsoccer.csv', row.names = FALSE)
+
+LSoccer <- create.fbRanks.dataframes(
+scores.file = 'C:/Users/Silvia/Desktop/Ana_Data_Science/R/Sesion1/footballsoccer.csv')
+LSoccer <- create.fbRanks.dataframes(scores.file ='footballsoccer.csv', date.format = '%d/%m/%Y')
+scores <- LSoccer$scores
+equipos <- LSoccer$teams
+
+head(LSoccer$scores)
+
+date_ <- unique(data$date)
+date_ <- as.Date(date_, '%d/%m/%Y')
+date_ <- sort(date_)
+x <- length(date_)
+
+ranking <- rank.teams(scores, teams = Teams, 
+                      max.date = Date[n-1], min.date = Date[1], 
+                      date.format = '%d/%m/%Y')
+predict(ranking, date = date_[n])
